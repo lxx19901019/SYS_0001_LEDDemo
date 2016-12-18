@@ -1,0 +1,6 @@
+package android.os;
+
+interface ILedService
+{
+	 int ledCtrl(int which, int status);
+}
