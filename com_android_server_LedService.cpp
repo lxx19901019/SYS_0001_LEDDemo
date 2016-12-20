@@ -21,38 +21,49 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+#include <hardware/led_hal.h>
+#include <hardware/hardware.h>
 namespace android{
-static jint fd;
+ 
+struct led_device_t *led_device;
 
 #include <android/log.h>  //liblog
 //__android_log_print(ANDROID_LOG_DEBUG,"JNIDemo","native add ...")
 
 jint ledOpen(JNIEnv *env, jobject cls)
 {
-	fd = open("/dev/leds", O_RDWR);
-	ALOGI("native ledOpen fd = %d", fd);
-	if(fd <= 0)
-		return -1;
-	else 
-		return 0;
+	int err;
+	const struct  hw_module_t *module;
+	struct hw_device_t *device;
 	
-
-	return 0;
+	/* 1. hw_get_module*/
+	ALOGI("native ledOpen");
+	err = hw_get_module("led", &module);
+	if(err== 0 ){
+			err = module->methods->open(module, NULL, &device);
+			if(err == 0) {
+				/*3 call led_open*/
+				led_device = (struct led_device_t *)device;
+				return led_device->led_open(led_device);
+			}else
+				return -1;
+	}
+	/* 2.get device*/
+	
+	return -1;
 }
 
 void ledClose(JNIEnv *env, jobject cls)
 {	
 		ALOGI("native ledClose");
-		close(fd);
 }
 
 
 jint ledCtrl(JNIEnv *env, jobject cls, jint which ,jint status)
 {
-
-	int ret = ioctl(fd, status, which);
-	ALOGI("native ledCtrl : %d %d %d",which , status, ret);
-	return 0;
+	ALOGI("native ledCtrl which:%d status:%d", which, status);	
+	return led_device->led_ctrl(led_device,which, status);
+	
 }
 
 

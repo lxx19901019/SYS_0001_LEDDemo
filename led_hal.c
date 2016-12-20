@@ -2,9 +2,8 @@
 #define LOG_TAG "LedHal"
 
 
-#include <hardware/vibrator.h>
-#include <hardware/hardware.h>
-#include <utils/misc.h>
+
+
 #include <utils/Log.h>
 #include <cutils/log.h>
 
@@ -13,13 +12,15 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <math.h>
-#include "led_hal.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <android/log.h> 
 
+#include <hardware/led_hal.h>
+#include <hardware/hardware.h>
 
 static int fd;
 static int led_close(struct hw_device_t *dev)
@@ -37,7 +38,7 @@ static int led_open(struct led_device_t *dev)
 		return 0;
 	
 }
-static int led_ctrl(struct led_device_t *dev, int which, int stauts)]
+static int led_ctrl(struct led_device_t *dev, int which, int status)
 {
 	int ret = ioctl(fd, status, which);
 	ALOGI("native ledCtrl : %d %d %d",which , status, ret);
@@ -57,7 +58,7 @@ static int led_device_open(const hw_module_t* module, const char* id __unused,
                       hw_device_t** device __unused)
 {
 	*device = &led_dev;
-	return 0
+	return 0;
 }
 
 static struct hw_module_methods_t led_methods = {
