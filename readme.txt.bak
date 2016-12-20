@@ -33,4 +33,28 @@
  $ mmm frameworks/base/services/
  $ make snod
  $ ./gen-img.sh
-		
+ 
+ out/target/product/tiny4412/system.img
+ 
+ 
+ 编写app
+ ILedService iLedService = ILedService.Stub.asInterface(ServiceManager.getService("led"));
+	a.包含什么
+		包含out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classess.jar
+	b.怎么包含 （google 搜索android studio jar）
+	
+	修改project/app/src/build.gradle
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    
+     defaultConfig {
+     //添加Enabling  multidex support.
+     multiDexEnabled true 
+     }
+     
+     dependencies {
+     	compile 'com.android.support:multidex:1.0.0'
+     }
+   修改
+   mainfest
